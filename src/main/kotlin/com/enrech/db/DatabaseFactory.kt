@@ -11,6 +11,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
+import java.lang.Exception
 
 object DatabaseFactory {
     fun init(config: ApplicationConfig) {
@@ -42,4 +43,13 @@ object DatabaseFactory {
 
     suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
+
+    suspend fun <T> dbQueryWithCatch(block: suspend () -> T?): T? =
+        newSuspendedTransaction(Dispatchers.IO) {
+            try {
+                block()
+            } catch (e: Exception) {
+                null
+            }
+        }
 }

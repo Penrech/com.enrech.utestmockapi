@@ -15,7 +15,8 @@ data class UserBadgeEntity(val userId: String, val obtainedTime: Long)
 class UserBadge(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserBadgeEntity> {
     companion object: UUIDEntityClass<UserBadge>(UserBadges)
     val user by User backReferencedOn UserBadges.reward
-    val obtainedTime by UserBadges.obtainedTime
+    var obtainedTime by UserBadges.obtainedTime
+    var reward by UserReward referencedOn UserBadges.reward
 
     override fun mapTo(): UserBadgeEntity =
         UserBadgeEntity(

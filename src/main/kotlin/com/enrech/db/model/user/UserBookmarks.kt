@@ -18,10 +18,11 @@ data class UserBookmarkEntity(val lessonId: String, val position: Long, val cont
 
 class UserBookmark(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserBookmarkEntity> {
     companion object: UUIDEntityClass<UserBookmark>(UserBookmarks)
-    val lesson by Lesson referencedOn UserBookmarks.lesson
+    var lesson by Lesson referencedOn UserBookmarks.lesson
+    var user by User referencedOn UserBookmarks.user
     val lessonId get() = lesson.id.value.toString()
-    val bookmarkPosition by UserBookmarks.bookmarkPosition
-    val description by UserBookmarks.description
+    var bookmarkPosition by UserBookmarks.bookmarkPosition
+    var description by UserBookmarks.description
 
     override fun mapTo(): UserBookmarkEntity =
         UserBookmarkEntity(

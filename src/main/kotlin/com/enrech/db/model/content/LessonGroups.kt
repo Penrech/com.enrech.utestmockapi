@@ -16,6 +16,7 @@ class LessonGroup(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<LessonGroupEnt
     companion object: UUIDEntityClass<LessonGroup>(LessonGroups)
     var title by LessonGroups.title
     val lessons by Lesson referrersOn Lessons.id
+    var chapter by Chapter referencedOn LessonGroups.chapter
     val lessonsQuantity get() = lessons.count()
 
     override fun mapTo(): LessonGroupEntity = LessonGroupEntity(
@@ -28,4 +29,5 @@ class LessonGroup(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<LessonGroupEnt
 
 object LessonGroups: UUIDTable() {
     val title = varchar("title", 1024)
+    val chapter = reference("chapter", Chapters)
 }

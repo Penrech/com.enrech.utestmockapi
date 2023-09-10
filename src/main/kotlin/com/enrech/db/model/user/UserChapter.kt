@@ -30,8 +30,8 @@ class UserChapter(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserChapterEn
     companion object : UUIDEntityClass<UserChapter>(UserChapters)
 
     val lessons by UserLesson referrersOn UserChapters.lessons
-    val subject by UserSubject referencedOn UserChapters.subject
-    val chapter by Chapter referencedOn UserChapters.chapter
+    var subject by UserSubject referencedOn UserChapters.subject
+    var chapter by Chapter referencedOn UserChapters.chapter
     val completed get() = lessons.all { it.completed }
     val lessonCompleted get() = lessons.count { it.completed }
     val totalLessons get() = lessons.count()

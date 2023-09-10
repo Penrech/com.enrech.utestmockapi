@@ -2,7 +2,6 @@ package com.enrech.db.model.content
 
 import com.enrech.common.BaseMapper
 import com.enrech.common.mapTo
-import com.enrech.db.model.content.LessonGroup.Companion.referrersOn
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -17,6 +16,7 @@ class Chapter(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<ChapterEntity> {
     companion object: UUIDEntityClass<Chapter>(Chapters)
     var title by Chapters.title
     var order by Chapters.order
+    var subject by Subject referencedOn Chapters.subject
     val lessonGroups by LessonGroup referrersOn LessonGroups.id
     val totalLessons get() = lessonGroups.sumOf { it.lessonsQuantity }
 
@@ -33,4 +33,5 @@ class Chapter(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<ChapterEntity> {
 object Chapters: UUIDTable() {
     val title = varchar("title", 1024)
     val order = integer("order")
+    val subject = reference("subject", Subjects)
 }

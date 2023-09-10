@@ -10,10 +10,17 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 import java.util.UUID
 
 @Serializable
-data class SubjectEntity(val id: String, val name: String, val chapters: List<ChapterEntity>, val totalChapters: Long, val totalLessons: Long)
+data class SubjectEntity(
+    val id: String,
+    val name: String,
+    val chapters: List<ChapterEntity>,
+    val totalChapters: Long,
+    val totalLessons: Long
+)
 
-class Subject(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<SubjectEntity> {
-    companion object: UUIDEntityClass<Subject>(Subjects)
+class Subject(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<SubjectEntity> {
+    companion object : UUIDEntityClass<Subject>(Subjects)
+
     var name by Subjects.name
     val chapters by Chapter referrersOn Chapters.id
     val totalChapters get() = chapters.count()
@@ -29,6 +36,6 @@ class Subject(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<SubjectEntity> {
         )
 }
 
-object Subjects: UUIDTable() {
+object Subjects : UUIDTable() {
     val name = varchar("name", 512)
 }

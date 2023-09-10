@@ -25,11 +25,11 @@ data class UserLessonEntity(
 class UserLesson(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserLessonEntity> {
     companion object : UUIDEntityClass<UserLesson>(UserLessons)
 
-    val lesson by Lesson referencedOn UserLessons.lesson
-    val completed by UserLessons.completed
-    val chapter by UserChapter referencedOn UserLessons.chapter
-    val playingPosition by UserLessons.playingPosition
-    val lastUpdate by UserLessons.lastUpdate
+    var lesson by Lesson referencedOn UserLessons.lesson
+    var completed by UserLessons.completed
+    var chapter by UserChapter referencedOn UserLessons.chapter
+    var playingPosition by UserLessons.playingPosition
+    var lastUpdate by UserLessons.lastUpdate
     val active
         get() =
             (lesson.duration > 0)

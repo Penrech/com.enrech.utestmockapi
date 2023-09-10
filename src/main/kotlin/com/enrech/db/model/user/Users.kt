@@ -43,4 +43,8 @@ object Users : UUIDTable() {
     val views = reference("views", UserSubjects)
     val bookmarks = reference("bookmarks", UserBookmarks)
     val rewards = reference("rewards", UserRewards)
+
+    init {
+        index(true, email)
+    }
 }
