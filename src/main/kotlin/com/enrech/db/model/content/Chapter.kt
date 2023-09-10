@@ -3,14 +3,15 @@ package com.enrech.db.model.content
 import com.enrech.common.BaseMapper
 import com.enrech.common.mapTo
 import com.enrech.db.model.content.LessonGroup.Companion.referrersOn
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
-import java.io.Serializable
 import java.util.UUID
 
-data class ChapterEntity(val id: String, val title: String, val order: Int, val lessonGroups: List<LessonGroupEntity>, val totalLessons: Long): Serializable
+@Serializable
+data class ChapterEntity(val id: String, val title: String, val order: Int, val lessonGroups: List<LessonGroupEntity>, val totalLessons: Long)
 
 class Chapter(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<ChapterEntity> {
     companion object: UUIDEntityClass<Chapter>(Chapters)

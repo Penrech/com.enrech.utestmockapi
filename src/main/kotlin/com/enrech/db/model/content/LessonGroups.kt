@@ -2,14 +2,15 @@ package com.enrech.db.model.content
 
 import com.enrech.common.BaseMapper
 import com.enrech.common.mapTo
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
-import java.io.Serializable
 import java.util.UUID
 
-data class LessonGroupEntity(val id: String, val title: String, val lessonsQuantity: Long, val lessons: List<LessonEntity>): Serializable
+@Serializable
+data class LessonGroupEntity(val id: String, val title: String, val lessonsQuantity: Long, val lessons: List<LessonEntity>)
 
 class LessonGroup(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<LessonGroupEntity> {
     companion object: UUIDEntityClass<LessonGroup>(LessonGroups)

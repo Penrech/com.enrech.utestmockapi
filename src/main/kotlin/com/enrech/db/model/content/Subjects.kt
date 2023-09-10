@@ -2,14 +2,15 @@ package com.enrech.db.model.content
 
 import com.enrech.common.BaseMapper
 import com.enrech.common.mapTo
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
-import java.io.Serializable
 import java.util.UUID
 
-data class SubjectEntity(val id: String, val name: String, val chapters: List<ChapterEntity>, val totalChapters: Long, val totalLessons: Long): Serializable
+@Serializable
+data class SubjectEntity(val id: String, val name: String, val chapters: List<ChapterEntity>, val totalChapters: Long, val totalLessons: Long)
 
 class Subject(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<SubjectEntity> {
     companion object: UUIDEntityClass<Subject>(Subjects)

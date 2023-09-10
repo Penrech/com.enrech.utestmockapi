@@ -5,10 +5,10 @@ import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
-import java.io.Serializable
 import java.util.UUID
 
-data class LessonEntity(val id: String, val name: String, val description: String, val duration: Long, val streamUrl: String): Serializable
+@kotlinx.serialization.Serializable
+data class LessonEntity(val id: String, val name: String, val description: String, val duration: Long, val streamUrl: String)
 
 class Lesson(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<LessonEntity> {
     companion object : UUIDEntityClass<Lesson>(Lessons)

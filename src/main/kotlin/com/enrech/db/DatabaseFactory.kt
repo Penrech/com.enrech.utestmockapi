@@ -1,9 +1,7 @@
 package com.enrech.db
 
-import com.enrech.db.model.content.Chapters
-import com.enrech.db.model.content.LessonGroups
-import com.enrech.db.model.content.Lessons
-import com.enrech.db.model.content.Subjects
+import com.enrech.db.model.content.*
+import com.enrech.db.model.user.addUserTables
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.config.*
@@ -25,7 +23,8 @@ object DatabaseFactory {
         val database = Database.connect(createHikariDataSource(jdbcURL, driverClassName))
 
         transaction(database) {
-            SchemaUtils.create(Lessons, LessonGroups, Chapters, Subjects)
+            addContentTables()
+            addUserTables()
         }
     }
 
