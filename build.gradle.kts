@@ -5,6 +5,7 @@ val exposed_version: String by project
 val h2_version: String by project
 val hikaricp_version: String by project
 val ehcache_version: String by project
+val koin_version: String by project
 
 plugins {
     kotlin("jvm") version "1.9.10"
@@ -46,6 +47,10 @@ dependencies {
     //Auth
     implementation("io.ktor:ktor-server-auth-jvm")
     implementation("io.ktor:ktor-server-auth-jwt-jvm")
+
+    //Koin
+    implementation("io.insert-koin:koin-ktor:$koin_version")
+    implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
 
     implementation("io.ktor:ktor-server-netty-jvm")
 
