@@ -2,6 +2,7 @@ package com.enrech.db.model.user
 
 import com.enrech.common.BaseMapper
 import com.enrech.common.mapTo
+import com.enrech.db.model.user.UserReward.Companion.optionalReferrersOn
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -14,8 +15,8 @@ data class UserRewardEntity(val userId: String, val badges: List<UserBadgeEntity
 
 class UserReward(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserRewardEntity> {
     companion object: UUIDEntityClass<UserReward>(UserRewards)
-    val user by User referencedOn UserRewards.user
-    val badges by UserBadge referrersOn UserRewards.badges
+    var user by User referencedOn UserRewards.user
+    val badges by UserBadge referrersOn UserBadges.reward
 
     override fun mapTo(): UserRewardEntity =
         UserRewardEntity(
@@ -27,7 +28,6 @@ class UserReward(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserRewardEntit
 
 object UserRewards : UUIDTable() {
     val user = reference("user", Users)
-    val badges = reference("badges", UserBadges)
 
     init {
         index(true, user)

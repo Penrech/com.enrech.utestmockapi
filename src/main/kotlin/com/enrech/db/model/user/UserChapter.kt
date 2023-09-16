@@ -29,7 +29,7 @@ data class UserChapterEntity(
 class UserChapter(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserChapterEntity> {
     companion object : UUIDEntityClass<UserChapter>(UserChapters)
 
-    val lessons by UserLesson referrersOn UserChapters.lessons
+    val lessons by UserLesson referrersOn UserLessons.chapter
     var subject by UserSubject referencedOn UserChapters.subject
     var chapter by Chapter referencedOn UserChapters.chapter
     val completed get() = lessons.all { it.completed }
@@ -52,7 +52,6 @@ class UserChapter(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserChapterEn
 }
 
 object UserChapters : UUIDTable() {
-    val lessons = reference("lessons", UserLessons)
     val chapter = reference("chapter", Chapters)
     val subject = reference("subject", UserSubjects)
 

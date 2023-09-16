@@ -1,18 +1,22 @@
 package com.enrech.db.dao.user
 
+import com.enrech.db.DatabaseFactory.dbQuery
 import com.enrech.db.DatabaseFactory.dbQueryWithCatch
 import com.enrech.db.model.user.User
 import com.enrech.db.model.user.UserEntity
+import com.enrech.db.model.user.UserReward
 import com.enrech.db.model.user.Users
 import org.jetbrains.exposed.sql.and
 import java.util.*
 
 class UserDAOFacadeImpl : UserDAOFacade {
 
-    override suspend fun addNewUser(email: String, password: String): UserEntity? = dbQueryWithCatch {
+    override suspend fun addNewUser(email: String, password: String): UserEntity? = dbQuery {
        User.new {
+           val user = this
            this.email = email
            this.password = password
+           this.rewards = UserReward.new { this.user = user}
        }.mapTo()
     }
 

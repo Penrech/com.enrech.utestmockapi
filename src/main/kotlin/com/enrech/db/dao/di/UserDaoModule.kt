@@ -1,14 +1,12 @@
 package com.enrech.db.dao.di
 
-import com.enrech.db.dao.user.UserBookmarkDAOFacadeImpl
-import com.enrech.db.dao.user.UserDAOFacadeImpl
-import com.enrech.db.dao.user.UserRewardsDAOFacadeImpl
-import com.enrech.db.dao.user.UserViewDAOFacadeImpl
+import com.enrech.db.dao.user.*
+import com.enrech.db.model.user.UserBookmark
 import org.koin.dsl.module
 
 val userDaoModule = module {
-    single { UserDAOFacadeImpl() }
-    single { UserBookmarkDAOFacadeImpl() }
-    single { UserRewardsDAOFacadeImpl() }
-    single { UserViewDAOFacadeImpl() }
+    single<UserDAOFacade> { UserDAOFacadeImpl() }
+    single<UserBookmarkDAOFacade> { UserBookmarkDAOFacadeImpl() }
+    single<UserRewardsDAOFacade> { UserRewardsDAOFacadeImpl() }
+    single<UserViewDAOFacade> { UserViewDAOFacadeImpl() }
 }

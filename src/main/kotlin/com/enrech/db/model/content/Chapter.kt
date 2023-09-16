@@ -7,6 +7,8 @@ import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.deleteAll
 import java.util.UUID
 
 @Serializable
@@ -17,7 +19,7 @@ class Chapter(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<ChapterEntity> {
     var title by Chapters.title
     var order by Chapters.order
     var subject by Subject referencedOn Chapters.subject
-    val lessonGroups by LessonGroup referrersOn LessonGroups.id
+    val lessonGroups by LessonGroup referrersOn LessonGroups.chapter
     val totalLessons get() = lessonGroups.sumOf { it.lessonsQuantity }
 
     override fun mapTo(): ChapterEntity =

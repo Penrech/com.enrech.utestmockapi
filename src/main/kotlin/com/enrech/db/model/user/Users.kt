@@ -23,9 +23,9 @@ class User(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserEntity> {
 
     var email by Users.email
     var password by Users.password
-    val views by UserSubject referrersOn Users.views
-    val bookmarks by UserBookmark referrersOn Users.bookmarks
-    val rewards by UserReward referencedOn Users.rewards
+    val views by UserSubject referrersOn UserSubjects.user
+    val bookmarks by UserBookmark referrersOn UserBookmarks.user
+    var rewards by UserReward referencedOn Users.rewards
 
     override fun mapTo(): UserEntity =
         UserEntity(
@@ -40,8 +40,6 @@ class User(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserEntity> {
 object Users : UUIDTable() {
     val email = varchar("email", 128)
     val password = varchar("password", 512)
-    val views = reference("views", UserSubjects)
-    val bookmarks = reference("bookmarks", UserBookmarks)
     val rewards = reference("rewards", UserRewards)
 
     init {

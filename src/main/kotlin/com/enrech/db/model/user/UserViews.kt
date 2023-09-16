@@ -11,10 +11,6 @@ class UserView(id: EntityID<UUID>): UUIDEntity(id) {
     val user by User referencedOn UserViews.user
     val views by UserLesson referrersOn UserViews.views
     val subjects = views.map { it.lesson.group.chapter.subject }
-
-    fun test() {
-
-    }
 }
 
 object UserViews: UUIDTable() {

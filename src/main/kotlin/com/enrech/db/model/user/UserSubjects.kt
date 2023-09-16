@@ -30,7 +30,7 @@ data class UserSubjectEntity(
 class UserSubject(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserSubjectEntity> {
     companion object: UUIDEntityClass<UserSubject>(UserSubjects)
     var subject by Subject referencedOn UserSubjects.subject
-    val chapters by UserChapter referrersOn UserSubjects.chapters
+    val chapters by UserChapter referrersOn UserChapters.subject
     var user by User referencedOn UserSubjects.user
     val chapterViewed get() = chapters.count { it.completed }
     val totalChapters get() = chapters.count()
@@ -56,7 +56,6 @@ class UserSubject(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserSubjectEnt
 object UserSubjects: UUIDTable() {
     val user = reference("user", Users)
     val subject = reference("subject", Subjects)
-    val chapters = reference("chapters", UserChapters)
 
     init {
         index(true, user, subject)

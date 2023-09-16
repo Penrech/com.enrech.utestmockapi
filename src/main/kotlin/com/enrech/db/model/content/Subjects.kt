@@ -7,6 +7,8 @@ import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.ForeignKeyConstraint
+import org.jetbrains.exposed.sql.ReferenceOption
 import java.util.UUID
 
 @Serializable
@@ -22,7 +24,7 @@ class Subject(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<SubjectEntity> {
     companion object : UUIDEntityClass<Subject>(Subjects)
 
     var name by Subjects.name
-    val chapters by Chapter referrersOn Chapters.id
+    val chapters by Chapter.referrersOn(Chapters.subject)
     val totalChapters get() = chapters.count()
     val totalLessons get() = chapters.sumOf { it.totalLessons }
 

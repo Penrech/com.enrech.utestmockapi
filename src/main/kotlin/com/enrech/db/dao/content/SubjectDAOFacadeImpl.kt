@@ -1,9 +1,11 @@
 package com.enrech.db.dao.content
 
 import com.enrech.common.mapTo
+import com.enrech.db.DatabaseFactory.dbQuery
 import com.enrech.db.DatabaseFactory.dbQueryWithCatch
 import com.enrech.db.model.content.Subject
 import com.enrech.db.model.content.SubjectEntity
+import org.jetbrains.exposed.sql.vendors.ForUpdateOption
 import java.util.*
 
 class SubjectDAOFacadeImpl : SubjectDAOFacade {
@@ -15,7 +17,7 @@ class SubjectDAOFacadeImpl : SubjectDAOFacade {
         Subject[UUID.fromString(id)].mapTo()
     }
 
-    override suspend fun addNewSubject(title: String): SubjectEntity? = dbQueryWithCatch {
+    override suspend fun addNewSubject(title: String): SubjectEntity? = dbQuery {
         Subject.new {
             this.name = title
         }.mapTo()
@@ -27,7 +29,7 @@ class SubjectDAOFacadeImpl : SubjectDAOFacade {
         subject.flush()
     } ?: false
 
-    override suspend fun deleteSubject(id: String): Boolean = dbQueryWithCatch {
+    override suspend fun deleteSubject(id: String): Boolean = dbQuery {
         Subject[UUID.fromString(id)].delete()
         true
     } ?: false

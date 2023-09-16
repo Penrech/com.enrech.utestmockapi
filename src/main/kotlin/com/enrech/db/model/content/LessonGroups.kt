@@ -7,6 +7,7 @@ import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import java.util.UUID
 
 @Serializable
@@ -15,7 +16,7 @@ data class LessonGroupEntity(val id: String, val title: String, val lessonsQuant
 class LessonGroup(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<LessonGroupEntity> {
     companion object: UUIDEntityClass<LessonGroup>(LessonGroups)
     var title by LessonGroups.title
-    val lessons by Lesson referrersOn Lessons.id
+    val lessons by Lesson referrersOn Lessons.group
     var chapter by Chapter referencedOn LessonGroups.chapter
     val lessonsQuantity get() = lessons.count()
 
