@@ -1,5 +1,6 @@
 package com.enrech.plugins
 
+import com.enrech.data.di.dataModule
 import com.enrech.db.dao.di.contentDaoModule
 import com.enrech.db.dao.di.userDaoModule
 import io.ktor.server.application.*
@@ -11,7 +12,8 @@ fun Application.configureKoin() {
         slf4jLogger()
         modules(
             contentDaoModule,
-            userDaoModule
+            userDaoModule,
+            dataModule
         )
     }
 }
