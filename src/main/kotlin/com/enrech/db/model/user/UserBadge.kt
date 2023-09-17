@@ -11,23 +11,24 @@ import org.jetbrains.exposed.sql.ReferenceOption
 import java.util.UUID
 
 @Serializable
-data class UserBadgeEntity(val userId: String, val obtainedTime: Long)
+data class UserBadgeEntity(val id: String, val userId: String, val obtainedTime: Long)
 
 class UserBadge(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserBadgeEntity> {
     companion object: UUIDEntityClass<UserBadge>(UserBadges)
-    val user by User backReferencedOn UserBadges.reward
     var obtainedTime by UserBadges.obtainedTime
     var rewardId by UserBadges.reward
     val reward by UserReward referencedOn UserBadges.reward
+    val user get() = reward.user.id
 
     override fun mapTo(): UserBadgeEntity =
         UserBadgeEntity(
-            userId = user.id.value.toString(),
+            id = this.id.value.toString(),
+            userId = user.toString(),
             obtainedTime = obtainedTime
         )
 }
 
 object UserBadges: UUIDTable() {
-    val reward = uuid("reward_id").uniqueIndex().references(UserRewards.id, onDelete = ReferenceOption.CASCADE)
+    val reward = uuid("reward_id").references(UserRewards.id, onDelete = ReferenceOption.CASCADE)
     val obtainedTime = long("obtained_time")
 }

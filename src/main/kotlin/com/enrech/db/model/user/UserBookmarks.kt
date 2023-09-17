@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.ReferenceOption
 import java.util.UUID
 
 @Serializable
-data class UserBookmarkEntity(val lessonId: String, val position: Long, val content: String)
+data class UserBookmarkEntity(val id: String, val lessonId: String, val position: Long, val content: String)
 
 class UserBookmark(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserBookmarkEntity> {
     companion object: UUIDEntityClass<UserBookmark>(UserBookmarks)
@@ -29,6 +29,7 @@ class UserBookmark(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserBookmarkE
 
     override fun mapTo(): UserBookmarkEntity =
         UserBookmarkEntity(
+            id = id.value.toString(),
             lessonId = lessonId.toString(),
             position = bookmarkPosition,
             content = description
@@ -36,8 +37,8 @@ class UserBookmark(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserBookmarkE
 }
 
 object UserBookmarks : UUIDTable() {
-    val user = uuid("user_id").uniqueIndex().references(Users.id, onDelete = ReferenceOption.CASCADE)
-    val lesson = uuid("lesson_id").uniqueIndex().references(Lessons.id, onDelete = ReferenceOption.CASCADE)
+    val user = uuid("user_id").references(Users.id, onDelete = ReferenceOption.CASCADE)
+    val lesson = uuid("lesson_id").references(Lessons.id, onDelete = ReferenceOption.CASCADE)
     val bookmarkPosition = long("position")
     val description = text("description")
 }

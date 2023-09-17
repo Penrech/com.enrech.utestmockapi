@@ -1,6 +1,7 @@
 package com.enrech.db.model.content
 
 import com.enrech.common.BaseMapper
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -8,7 +9,7 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import java.util.UUID
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class LessonEntity(val id: String, val name: String, val description: String, val duration: Long, val streamUrl: String)
 
 class Lesson(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<LessonEntity> {
@@ -24,7 +25,7 @@ class Lesson(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<LessonEntity> {
 }
 
 object Lessons: UUIDTable() {
-    val group = uuid("group_id").uniqueIndex().references(LessonGroups.id, onDelete = ReferenceOption.CASCADE)
+    val group = uuid("group_id").references(LessonGroups.id, onDelete = ReferenceOption.CASCADE)
     val name = varchar("name", 1024)
     val description = varchar("description", 1024)
     val duration = long("duration")

@@ -1,13 +1,8 @@
 package com.enrech.db.dao.content
 
 import com.enrech.common.mapTo
-import com.enrech.db.DatabaseFactory.dbQuery
 import com.enrech.db.DatabaseFactory.dbQueryWithCatch
-import com.enrech.db.model.content.Lesson
-import com.enrech.db.model.content.LessonEntity
-import com.enrech.db.model.content.LessonGroup
-import com.enrech.db.model.content.Lessons
-import org.jetbrains.exposed.sql.selectAll
+import com.enrech.db.model.content.*
 import java.util.*
 
 class LessonsDAOFacadeImpl : LessonsDAOFacade {
@@ -15,9 +10,9 @@ class LessonsDAOFacadeImpl : LessonsDAOFacade {
 
     override suspend fun lesson(id: String): LessonEntity? = dbQueryWithCatch { Lesson[UUID.fromString(id)].mapTo() }
 
-    override suspend fun getLessonGroup(lessonId: String): LessonGroup? = dbQueryWithCatch {
+    override suspend fun getLessonGroup(lessonId: String): LessonGroupEntity? = dbQueryWithCatch {
         val lesson = Lesson[UUID.fromString(lessonId)]
-        lesson.group
+        lesson.group.mapTo()
     }
 
     override suspend fun addNewLesson(

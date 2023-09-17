@@ -8,10 +8,13 @@ import java.util.*
 class UserViewDAOFacadeImpl : UserViewDAOFacade {
     override suspend fun logNewLessonView(lessonId: String, userId: String, position: Long): UserLessonEntity? = dbQueryWithCatch {
         val lesson = Lesson[UUID.fromString(lessonId)]
-        val userChapter = UserChapter.find { UserChapters.chapter eq lesson.group.chapterId }.firstOrNull()
+        val chapter = lesson.group.chapter
+        val subject = chapter.subject
+
+        val userChapter = UserChapter.find { UserChapters.chapter eq chapter.id.value }.firstOrNull()
 
         val actualOrNewUserChapter = userChapter ?: run {
-            val userSubject = UserSubject.find { UserSubjects.subject eq lesson.group.chapter.subjectId }.firstOrNull()
+            val userSubject = UserSubject.find { UserSubjects.subject eq subject.id.value }.firstOrNull()
 
             userSubject?.let {
                 UserChapter.new {
@@ -20,11 +23,11 @@ class UserViewDAOFacadeImpl : UserViewDAOFacade {
                 }
             } ?: run {
                 val newUserSubject = UserSubject.new {
-                    subjectId = lesson.group.chapter.subjectId
+                    subjectId = subject.id.value
                     this.userId = UUID.fromString(userId)
                 }
                 UserChapter.new {
-                    this.chapterId = lesson.group.chapterId
+                    this.chapterId = chapter.id.value
                     this.subjectId = newUserSubject.subjectId
                 }
             }

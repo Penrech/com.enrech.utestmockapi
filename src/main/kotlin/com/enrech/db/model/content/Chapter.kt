@@ -36,5 +36,5 @@ class Chapter(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<ChapterEntity> {
 object Chapters: UUIDTable() {
     val title = varchar("title", 1024)
     val order = integer("order")
-    val subject = uuid("subject_id").uniqueIndex().references(Subjects.id, onDelete = ReferenceOption.CASCADE)
+    val subject = uuid("subject_id").references(Subjects.id, onDelete = ReferenceOption.CASCADE)
 }

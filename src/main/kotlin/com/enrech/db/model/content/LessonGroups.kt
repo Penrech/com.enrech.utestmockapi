@@ -31,5 +31,5 @@ class LessonGroup(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<LessonGroupEnt
 
 object LessonGroups: UUIDTable() {
     val title = varchar("title", 1024)
-    val chapter = uuid("chapter_id").uniqueIndex().references(Chapters.id, onDelete = ReferenceOption.CASCADE)
+    val chapter = uuid("chapter_id").references(Chapters.id, onDelete = ReferenceOption.CASCADE)
 }

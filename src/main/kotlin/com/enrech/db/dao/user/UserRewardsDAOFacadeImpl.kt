@@ -1,6 +1,7 @@
 package com.enrech.db.dao.user
 
 import com.enrech.common.mapTo
+import com.enrech.db.DatabaseFactory.dbQuery
 import com.enrech.db.DatabaseFactory.dbQueryWithCatch
 import com.enrech.db.model.user.*
 import java.util.UUID
@@ -18,7 +19,7 @@ class UserRewardsDAOFacadeImpl : UserRewardsDAOFacade {
         User[UUID.fromString(userId)].rewards.mapTo()
     }
 
-    override suspend fun addNewBadge(userId: String, timestamp: Long): UserBadgeEntity? = dbQueryWithCatch {
+    override suspend fun addNewBadge(userId: String, timestamp: Long): UserBadgeEntity? = dbQuery {
         val userReward = User[UUID.fromString(userId)].rewards
         UserBadge.new {
             this.rewardId = userReward.id.value

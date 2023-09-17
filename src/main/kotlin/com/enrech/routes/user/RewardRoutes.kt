@@ -48,7 +48,7 @@ fun Route.rewardRoutes() {
                     call.respond(HttpStatusCode.OK, it)
                 } ?: call.respond(
                     HttpStatusCode.NotFound,
-                    Errors.NotFound("Badge with id: $id")
+                    Errors.NotFound("Badge with id: $id").toResponse()
                 )
             }
             post("/new") {
