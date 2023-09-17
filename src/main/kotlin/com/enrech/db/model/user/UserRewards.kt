@@ -8,6 +8,7 @@ import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import java.util.UUID
 
 @Serializable
@@ -15,8 +16,9 @@ data class UserRewardEntity(val userId: String, val badges: List<UserBadgeEntity
 
 class UserReward(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserRewardEntity> {
     companion object: UUIDEntityClass<UserReward>(UserRewards)
-    var user by User referencedOn UserRewards.user
-    val badges by UserBadge referrersOn UserBadges.reward
+    var userId by UserRewards.user
+    val user by User referencedOn UserRewards.user
+    val badges get() = UserBadge.find { UserBadges.reward eq this@UserReward.id.value }
 
     override fun mapTo(): UserRewardEntity =
         UserRewardEntity(
@@ -27,9 +29,5 @@ class UserReward(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserRewardEntit
 }
 
 object UserRewards : UUIDTable() {
-    val user = reference("user", Users)
-
-    init {
-        index(true, user)
-    }
+    val user = uuid("user_id").uniqueIndex().references(Users.id, onUpdate = ReferenceOption.CASCADE)
 }

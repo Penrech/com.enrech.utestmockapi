@@ -17,13 +17,14 @@ class Lesson(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<LessonEntity> {
     var description by Lessons.description
     var duration by Lessons.duration
     var streamUrl by Lessons.streamUrl
-    var group by LessonGroup referencedOn Lessons.group
+    var groupId by Lessons.group
+    val group by LessonGroup referencedOn Lessons.group
 
     override fun mapTo(): LessonEntity = LessonEntity(this.id.value.toString(), name, description, duration, streamUrl)
 }
 
 object Lessons: UUIDTable() {
-    val group = reference("group", LessonGroups)
+    val group = uuid("group_id").uniqueIndex().references(LessonGroups.id, onDelete = ReferenceOption.CASCADE)
     val name = varchar("name", 1024)
     val description = varchar("description", 1024)
     val duration = long("duration")

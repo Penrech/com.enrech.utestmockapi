@@ -24,7 +24,7 @@ class Subject(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<SubjectEntity> {
     companion object : UUIDEntityClass<Subject>(Subjects)
 
     var name by Subjects.name
-    val chapters by Chapter.referrersOn(Chapters.subject)
+    val chapters get() = Chapter.find { Chapters.subject eq this@Subject.id.value }
     val totalChapters get() = chapters.count()
     val totalLessons get() = chapters.sumOf { it.totalLessons }
 

@@ -12,12 +12,12 @@ import java.util.*
 class UserDAOFacadeImpl : UserDAOFacade {
 
     override suspend fun addNewUser(email: String, password: String): UserEntity? = dbQuery {
-       User.new {
-           val user = this
-           this.email = email
-           this.password = password
-           this.rewards = UserReward.new { this.user = user}
-       }.mapTo()
+        val user = User.new {
+            this.email = email
+            this.password = password
+        }
+        UserReward.new { this.userId = user.id.value }
+        user.mapTo()
     }
 
     override suspend fun getUserByEmail(email: String): UserEntity? = dbQueryWithCatch {

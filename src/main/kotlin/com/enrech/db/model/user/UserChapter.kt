@@ -13,6 +13,7 @@ import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import java.util.UUID
 
 @Serializable
@@ -28,10 +29,12 @@ data class UserChapterEntity(
 
 class UserChapter(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserChapterEntity> {
     companion object : UUIDEntityClass<UserChapter>(UserChapters)
+    var subjectId by UserChapters.subject
+    var chapterId by UserChapters.chapter
 
     val lessons by UserLesson referrersOn UserLessons.chapter
-    var subject by UserSubject referencedOn UserChapters.subject
-    var chapter by Chapter referencedOn UserChapters.chapter
+    val subject by UserSubject referencedOn UserChapters.subject
+    val chapter by Chapter referencedOn UserChapters.chapter
     val completed get() = lessons.all { it.completed }
     val lessonCompleted get() = lessons.count { it.completed }
     val totalLessons get() = lessons.count()
@@ -41,21 +44,17 @@ class UserChapter(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserChapterEn
 
     override fun mapTo(): UserChapterEntity =
         UserChapterEntity(
-            chapterId = chapter.id.value.toString(),
+            chapterId = chapterId.toString(),
             completed = completed,
             lessonCompleted = lessonCompleted,
             totalLessons = totalLessons,
             currentLessonId = activeLesson?.lesson?.id?.value?.toString(),
-            subjectId = subject.id.value.toString(),
+            subjectId = subjectId.toString(),
             lastUpdate = lastUpdate
         )
 }
 
 object UserChapters : UUIDTable() {
-    val chapter = reference("chapter", Chapters)
-    val subject = reference("subject", UserSubjects)
-
-    init {
-        index(true, subject, chapter)
-    }
+    val chapter = uuid("chapter_id").uniqueIndex().references(Chapters.id, onDelete = ReferenceOption.CASCADE)
+    val subject = uuid("subject_id").uniqueIndex().references(UserSubjects.id, onDelete = ReferenceOption.CASCADE)
 }

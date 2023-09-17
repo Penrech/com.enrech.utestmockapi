@@ -8,31 +8,31 @@ import java.util.*
 class UserViewDAOFacadeImpl : UserViewDAOFacade {
     override suspend fun logNewLessonView(lessonId: String, userId: String, position: Long): UserLessonEntity? = dbQueryWithCatch {
         val lesson = Lesson[UUID.fromString(lessonId)]
-        val userChapter = UserChapter.find { UserChapters.chapter eq lesson.group.chapter.id }.firstOrNull()
+        val userChapter = UserChapter.find { UserChapters.chapter eq lesson.group.chapterId }.firstOrNull()
 
         val actualOrNewUserChapter = userChapter ?: run {
-            val userSubject = UserSubject.find { UserSubjects.subject eq lesson.group.chapter.subject.id }.firstOrNull()
+            val userSubject = UserSubject.find { UserSubjects.subject eq lesson.group.chapter.subjectId }.firstOrNull()
 
             userSubject?.let {
                 UserChapter.new {
-                    this.chapter = lesson.group.chapter
-                    this.subject = userSubject
+                    this.chapterId = lesson.group.chapterId
+                    this.subjectId = userSubject.subjectId
                 }
             } ?: run {
                 val newUserSubject = UserSubject.new {
-                    subject = lesson.group.chapter.subject
-                    user = User[UUID.fromString(userId)]
+                    subjectId = lesson.group.chapter.subjectId
+                    this.userId = UUID.fromString(userId)
                 }
                 UserChapter.new {
-                    this.chapter = lesson.group.chapter
-                    this.subject = newUserSubject
+                    this.chapterId = lesson.group.chapterId
+                    this.subjectId = newUserSubject.subjectId
                 }
             }
         }
 
         UserLesson.new {
-            this.lesson = lesson
-            this.chapter = actualOrNewUserChapter
+            this.lessonId = lesson.id.value
+            this.chapterId = actualOrNewUserChapter.chapterId
             this.completed = lesson.duration == position
             this.playingPosition = position
             this.lastUpdate = System.currentTimeMillis()

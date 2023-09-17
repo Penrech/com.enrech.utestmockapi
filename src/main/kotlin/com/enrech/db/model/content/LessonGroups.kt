@@ -16,8 +16,9 @@ data class LessonGroupEntity(val id: String, val title: String, val lessonsQuant
 class LessonGroup(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<LessonGroupEntity> {
     companion object: UUIDEntityClass<LessonGroup>(LessonGroups)
     var title by LessonGroups.title
-    val lessons by Lesson referrersOn Lessons.group
-    var chapter by Chapter referencedOn LessonGroups.chapter
+    var chapterId by LessonGroups.chapter
+    val lessons get() = Lesson.find { Lessons.group eq this@LessonGroup.id.value }
+    val chapter by Chapter referencedOn LessonGroups.chapter
     val lessonsQuantity get() = lessons.count()
 
     override fun mapTo(): LessonGroupEntity = LessonGroupEntity(
@@ -30,5 +31,5 @@ class LessonGroup(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<LessonGroupEnt
 
 object LessonGroups: UUIDTable() {
     val title = varchar("title", 1024)
-    val chapter = reference("chapter", Chapters)
+    val chapter = uuid("chapter_id").uniqueIndex().references(Chapters.id, onDelete = ReferenceOption.CASCADE)
 }

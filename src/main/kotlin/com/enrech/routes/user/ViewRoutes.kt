@@ -1,49 +1,43 @@
-package com.enrech.routes.content
+package com.enrech.routes.user
 
 import com.enrech.common.extension.getNonEmptyOrNull
+import com.enrech.common.extension.getSingleElement
 import com.enrech.common.extension.receiveOrNull
-import com.enrech.data.request.EditChapterDto
-import com.enrech.data.request.NewChapterDto
+import com.enrech.data.request.NewViewDto
 import com.enrech.domain.model.Errors
-import com.enrech.domain.repository.ChapterRepository
-import com.enrech.domain.repository.LessonGroupRepository
+import com.enrech.domain.repository.ViewsRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.json.Json
 import org.koin.ktor.ext.inject
 
-fun Route.chapterRoutes() {
-    val repo by inject<ChapterRepository>()
-    val groupRepo by inject<LessonGroupRepository>()
+fun Route.viewRoutes() {
+    val repo by inject<ViewsRepository>()
 
-    route("/chapter") {
-        get {
-            call.request.queryParameters.getNonEmptyOrNull("groupId")?.let {
-                val data = groupRepo.getChapter(it)?.let { listOf(it) } ?: emptyList()
-                call.respond(data)
-            } ?: call.respond(repo.allChapters())
-        }
+    route("/views") {
         get("/{id}") {
             val id = call.parameters.getNonEmptyOrNull("id") ?: return@get call.respond(
                 status = HttpStatusCode.BadRequest,
                 Errors.MissingInputParameter("id").toResponse()
             )
 
-            val data = repo.chapter(id) ?: return@get call.respond(
+            val data = repo.getLessonView(id) ?: return@get call.respond(
                 status = HttpStatusCode.NotFound,
-                Errors.NotFound("Chapter with id: $id").toResponse()
+                Errors.NotFound("View with id: $id").toResponse()
             )
 
             call.respond(data)
         }
         post("/new") {
-            val data = call.receiveOrNull<NewChapterDto>() ?: return@post call.respond(
-                status = HttpStatusCode.BadRequest,
+            val data = call.receiveOrNull<NewViewDto>() ?: return@post call.respond(
+                HttpStatusCode.BadRequest,
                 Errors.BadRequestBody.toResponse()
             )
 
-            repo.addNewChapter(data.title, data.order, data.subjectId)?.let {
+            repo.logNewLessonView(data.lessonId, data.userId, data.position)?.let {
                 call.respond(HttpStatusCode.OK, it)
             } ?: call.respond(HttpStatusCode.BadRequest, Errors.Unknown.toResponse())
         }
@@ -54,14 +48,17 @@ fun Route.chapterRoutes() {
                 Errors.MissingInputParameter("id").toResponse()
             )
 
-            val data = call.receiveOrNull<EditChapterDto>()
+            val position = Json.getSingleElement<Long>(call.receiveText(), "position") ?: return@patch call.respond(
+                status = HttpStatusCode.BadRequest,
+                Errors.MissingInputParameter("position").toResponse()
+            )
 
-            if (repo.editChapter(id, data?.title, data?.order)) {
+            if (repo.editLessonView(id, position)) {
                 call.respond(HttpStatusCode.OK, "")
             } else {
                 call.respond(
                     HttpStatusCode.BadRequest,
-                    Errors.UpdateError("Chapter with id: $id").toResponse()
+                    Errors.UpdateError("LoggedView with id: $id").toResponse()
                 )
             }
         }
@@ -72,12 +69,12 @@ fun Route.chapterRoutes() {
                 Errors.MissingInputParameter("id").toResponse()
             )
 
-            if (repo.deleteChapter(id)) {
+            if (repo.deleteLessonView(id)) {
                 call.respond(HttpStatusCode.OK, "")
             } else {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    Errors.DeleteError("Chapter with id: $id").toResponse()
+                    Errors.DeleteError("LoggedView with id: $id").toResponse()
                 )
             }
         }

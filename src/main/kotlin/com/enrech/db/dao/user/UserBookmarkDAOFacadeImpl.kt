@@ -24,8 +24,8 @@ class UserBookmarkDAOFacadeImpl : UserBookmarkDAOFacade {
         content: String
     ): UserBookmarkEntity? = dbQueryWithCatch {
         UserBookmark.new {
-            user = User[UUID.fromString(userId)]
-            lesson = Lesson[UUID.fromString(lessonId)]
+            this.userId = UUID.fromString(userId)
+            this.lessonId = UUID.fromString(lessonId)
             bookmarkPosition = position
             description = content
         }.mapTo()

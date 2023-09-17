@@ -7,6 +7,7 @@ import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import java.util.UUID
 
 @Serializable
@@ -16,7 +17,8 @@ class UserBadge(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserBadgeEntity>
     companion object: UUIDEntityClass<UserBadge>(UserBadges)
     val user by User backReferencedOn UserBadges.reward
     var obtainedTime by UserBadges.obtainedTime
-    var reward by UserReward referencedOn UserBadges.reward
+    var rewardId by UserBadges.reward
+    val reward by UserReward referencedOn UserBadges.reward
 
     override fun mapTo(): UserBadgeEntity =
         UserBadgeEntity(
@@ -26,6 +28,6 @@ class UserBadge(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserBadgeEntity>
 }
 
 object UserBadges: UUIDTable() {
-    val reward = reference("reward", UserRewards)
+    val reward = uuid("reward_id").uniqueIndex().references(UserRewards.id, onDelete = ReferenceOption.CASCADE)
     val obtainedTime = long("obtained_time")
 }

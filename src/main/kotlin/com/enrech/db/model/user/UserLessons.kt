@@ -11,6 +11,7 @@ import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import java.util.UUID
 
 @Serializable
@@ -25,11 +26,14 @@ data class UserLessonEntity(
 class UserLesson(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserLessonEntity> {
     companion object : UUIDEntityClass<UserLesson>(UserLessons)
 
-    var lesson by Lesson referencedOn UserLessons.lesson
+    var chapterId by UserLessons.chapter
+    var lessonId by UserLessons.lesson
     var completed by UserLessons.completed
-    var chapter by UserChapter referencedOn UserLessons.chapter
     var playingPosition by UserLessons.playingPosition
     var lastUpdate by UserLessons.lastUpdate
+
+    val chapter by UserChapter referencedOn UserLessons.chapter
+    val lesson by Lesson referencedOn UserLessons.lesson
     val active
         get() =
             (lesson.duration > 0)
@@ -47,13 +51,9 @@ class UserLesson(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserLessonEnti
 }
 
 object UserLessons : UUIDTable() {
-    val lesson = reference("lesson", Lessons)
-    val chapter = reference("chapter", UserChapters)
+    val lesson = uuid("lesson_id").uniqueIndex().references(Lessons.id, onDelete = ReferenceOption.CASCADE)
+    val chapter = uuid("chapter_id").references(UserChapters.id, onDelete = ReferenceOption.CASCADE)
     val completed = bool("completed")
     val playingPosition = long("position")
     val lastUpdate = long("last_update")
-
-    init {
-        index(true, lesson)
-    }
 }

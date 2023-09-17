@@ -3,26 +3,23 @@ package com.enrech.routes.content
 import com.enrech.common.extension.getNonEmptyOrNull
 import com.enrech.common.extension.receiveOrNull
 import com.enrech.data.request.EditChapterDto
+import com.enrech.data.request.EditLessonDto
 import com.enrech.data.request.NewChapterDto
+import com.enrech.data.request.NewLessonDto
 import com.enrech.domain.model.Errors
-import com.enrech.domain.repository.ChapterRepository
-import com.enrech.domain.repository.LessonGroupRepository
+import com.enrech.domain.repository.LessonRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
-fun Route.chapterRoutes() {
-    val repo by inject<ChapterRepository>()
-    val groupRepo by inject<LessonGroupRepository>()
+fun Route.lessonRoutes() {
+    val repo by inject<LessonRepository>()
 
-    route("/chapter") {
+    route("/lesson") {
         get {
-            call.request.queryParameters.getNonEmptyOrNull("groupId")?.let {
-                val data = groupRepo.getChapter(it)?.let { listOf(it) } ?: emptyList()
-                call.respond(data)
-            } ?: call.respond(repo.allChapters())
+            call.respond(repo.allLessons())
         }
         get("/{id}") {
             val id = call.parameters.getNonEmptyOrNull("id") ?: return@get call.respond(
@@ -30,20 +27,20 @@ fun Route.chapterRoutes() {
                 Errors.MissingInputParameter("id").toResponse()
             )
 
-            val data = repo.chapter(id) ?: return@get call.respond(
-                status = HttpStatusCode.NotFound,
-                Errors.NotFound("Chapter with id: $id").toResponse()
+            val data = repo.lesson(id) ?: return@get call.respond(
+                status = HttpStatusCode.OK,
+                Errors.NotFound("Lesson with id: $id").toResponse()
             )
 
             call.respond(data)
         }
         post("/new") {
-            val data = call.receiveOrNull<NewChapterDto>() ?: return@post call.respond(
+            val data = call.receiveOrNull<NewLessonDto>() ?: return@post call.respond(
                 status = HttpStatusCode.BadRequest,
                 Errors.BadRequestBody.toResponse()
             )
 
-            repo.addNewChapter(data.title, data.order, data.subjectId)?.let {
+            repo.addNewLesson(data.groupId, data.name, data.description, data.duration, data.streamUrl)?.let {
                 call.respond(HttpStatusCode.OK, it)
             } ?: call.respond(HttpStatusCode.BadRequest, Errors.Unknown.toResponse())
         }
@@ -54,14 +51,14 @@ fun Route.chapterRoutes() {
                 Errors.MissingInputParameter("id").toResponse()
             )
 
-            val data = call.receiveOrNull<EditChapterDto>()
+            val data = call.receiveOrNull<EditLessonDto>()
 
-            if (repo.editChapter(id, data?.title, data?.order)) {
+            if (repo.editLesson(id, data?.name, data?.description, data?.duration, data?.streamUrl)) {
                 call.respond(HttpStatusCode.OK, "")
             } else {
                 call.respond(
                     HttpStatusCode.BadRequest,
-                    Errors.UpdateError("Chapter with id: $id").toResponse()
+                    Errors.UpdateError("Lesson with id: $id").toResponse()
                 )
             }
         }
@@ -72,12 +69,12 @@ fun Route.chapterRoutes() {
                 Errors.MissingInputParameter("id").toResponse()
             )
 
-            if (repo.deleteChapter(id)) {
+            if (repo.deleteLesson(id)) {
                 call.respond(HttpStatusCode.OK, "")
             } else {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    Errors.DeleteError("Chapter with id: $id").toResponse()
+                    Errors.DeleteError("Lesson with id: $id").toResponse()
                 )
             }
         }

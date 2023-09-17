@@ -6,5 +6,7 @@ fun Route.content() {
     route("/content") {
         subjectRoutes()
         chapterRoutes()
+        groupRoutes()
+        lessonRoutes()
     }
 }

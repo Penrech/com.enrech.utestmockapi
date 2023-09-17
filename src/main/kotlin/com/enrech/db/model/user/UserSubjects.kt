@@ -13,6 +13,7 @@ import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import java.util.UUID
 
 @Serializable
@@ -29,9 +30,11 @@ data class UserSubjectEntity(
 
 class UserSubject(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserSubjectEntity> {
     companion object: UUIDEntityClass<UserSubject>(UserSubjects)
-    var subject by Subject referencedOn UserSubjects.subject
-    val chapters by UserChapter referrersOn UserChapters.subject
-    var user by User referencedOn UserSubjects.user
+    var subjectId by UserSubjects.subject
+    var userId by UserSubjects.user
+    val subject by Subject referencedOn UserSubjects.subject
+    val user by User referencedOn UserSubjects.user
+    val chapters get() = UserChapter.find { UserChapters.subject eq this@UserSubject.subjectId }
     val chapterViewed get() = chapters.count { it.completed }
     val totalChapters get() = chapters.count()
     val lessonViewed get() = chapters.sumOf { it.lessonCompleted }
@@ -42,7 +45,7 @@ class UserSubject(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserSubjectEnt
 
     override fun mapTo(): UserSubjectEntity =
         UserSubjectEntity(
-            subjectId = subject.id.value.toString(),
+            subjectId = subjectId.toString(),
             chapterViewed = chapterViewed,
             lessonViewed = lessonViewed,
             totalChapter = totalChapters,
@@ -54,10 +57,6 @@ class UserSubject(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserSubjectEnt
 }
 
 object UserSubjects: UUIDTable() {
-    val user = reference("user", Users)
-    val subject = reference("subject", Subjects)
-
-    init {
-        index(true, user, subject)
-    }
+    val user = uuid("user_id").uniqueIndex().references(Users.id, onDelete = ReferenceOption.CASCADE)
+    val subject = uuid("subject_id").uniqueIndex().references(Subjects.id, onDelete = ReferenceOption.CASCADE)
 }

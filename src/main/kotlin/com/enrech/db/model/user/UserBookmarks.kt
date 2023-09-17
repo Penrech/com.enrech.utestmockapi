@@ -11,6 +11,7 @@ import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import java.util.UUID
 
 @Serializable
@@ -18,27 +19,25 @@ data class UserBookmarkEntity(val lessonId: String, val position: Long, val cont
 
 class UserBookmark(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserBookmarkEntity> {
     companion object: UUIDEntityClass<UserBookmark>(UserBookmarks)
-    var lesson by Lesson referencedOn UserBookmarks.lesson
-    var user by User referencedOn UserBookmarks.user
-    val lessonId get() = lesson.id.value.toString()
+
+    var lessonId by UserBookmarks.lesson
+    var userId by UserBookmarks.user
+    val lesson by Lesson referencedOn UserBookmarks.lesson
+    val user by User referencedOn UserBookmarks.user
     var bookmarkPosition by UserBookmarks.bookmarkPosition
     var description by UserBookmarks.description
 
     override fun mapTo(): UserBookmarkEntity =
         UserBookmarkEntity(
-            lessonId = lessonId,
+            lessonId = lessonId.toString(),
             position = bookmarkPosition,
             content = description
         )
 }
 
 object UserBookmarks : UUIDTable() {
-    val user = reference("user", Users)
-    val lesson = reference("lesson", Lessons)
+    val user = uuid("user_id").uniqueIndex().references(Users.id, onDelete = ReferenceOption.CASCADE)
+    val lesson = uuid("lesson_id").uniqueIndex().references(Lessons.id, onDelete = ReferenceOption.CASCADE)
     val bookmarkPosition = long("position")
     val description = text("description")
-
-    init {
-        index(true, user, lesson)
-    }
 }
