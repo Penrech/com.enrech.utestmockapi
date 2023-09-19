@@ -29,5 +29,5 @@ class UserBadge(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserBadgeEntity>
 
 object UserBadges: UUIDTable() {
     val obtainedTime = long("obtained_time")
-    val reward = reference("reward", UserRewards)
+    val reward = reference("reward", UserRewards, onDelete = ReferenceOption.CASCADE, onUpdate = ReferenceOption.CASCADE)
 }

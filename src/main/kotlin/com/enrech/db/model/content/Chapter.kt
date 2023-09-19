@@ -18,9 +18,8 @@ class Chapter(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<ChapterEntity> {
     companion object: UUIDEntityClass<Chapter>(Chapters)
     var title by Chapters.title
     var order by Chapters.order
-    var subjectId by Chapters.subject
-    val subject by Subject referencedOn Chapters.subject
-    val lessonGroups get() = LessonGroup.find { LessonGroups.chapter eq this@Chapter.id.value }
+    var subject by Subject referencedOn Chapters.subject
+    val lessonGroups by LessonGroup referrersOn LessonGroups.chapter
     val totalLessons get() = lessonGroups.sumOf { it.lessonsQuantity }
 
     override fun mapTo(): ChapterEntity =
@@ -36,5 +35,5 @@ class Chapter(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<ChapterEntity> {
 object Chapters: UUIDTable() {
     val title = varchar("title", 1024)
     val order = integer("order")
-    val subject = uuid("subject_id").references(Subjects.id, onDelete = ReferenceOption.CASCADE)
+    val subject = reference("subject", Subjects, onDelete = ReferenceOption.CASCADE, onUpdate = ReferenceOption.CASCADE)
 }

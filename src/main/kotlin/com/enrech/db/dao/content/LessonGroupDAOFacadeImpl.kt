@@ -26,7 +26,7 @@ class LessonGroupDAOFacadeImpl : LessonGroupDAOFacade {
     override suspend fun addNewLessonGroup(title: String, chapterId: String): LessonGroupEntity? = dbQueryWithCatch {
         LessonGroup.new {
             this.title = title
-            this.chapterId = UUID.fromString(chapterId)
+            this.chapter = Chapter[UUID.fromString(chapterId)]
         }.mapTo()
     }
 

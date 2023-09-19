@@ -8,13 +8,14 @@ import java.util.*
 
 class UserDAOFacadeImpl : UserDAOFacade {
 
-    override suspend fun addNewUser(email: String, password: String): UserEntity? = dbQuery {
+    override suspend fun addNewUser(email: String, password: String): UserEntity? = dbQueryWithCatch{
         val user = User.new {
             this.email = email
             this.password = password
         }
 
         UserReward.new { this.user = user }
+        UserViewGroup.new { this.user = user }
 
         user.mapTo()
     }

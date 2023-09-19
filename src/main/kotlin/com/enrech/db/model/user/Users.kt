@@ -2,6 +2,7 @@ package com.enrech.db.model.user
 
 import com.enrech.common.BaseMapper
 import com.enrech.common.mapTo
+import com.enrech.db.model.content.Subject.Companion.backReferencedOn
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -14,6 +15,7 @@ data class UserEntity(
     val id: String,
     val email: String,
     val bookmarks: List<UserBookmarkEntity>,
+    val views: List<UserViewSubjectEntity>,
     val rewards: UserRewardEntity
 )
 
@@ -25,12 +27,14 @@ class User(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserEntity> {
     val bookmarks get() = UserBookmark.find { UserBookmarks.user eq this@User.id.value }
 
     val rewards by UserReward backReferencedOn UserRewards.user
+    val views by UserViewGroup backReferencedOn UserViewsGroup.user
 
     override fun mapTo(): UserEntity =
         UserEntity(
             id = this.id.value.toString(),
             email = email,
             bookmarks = bookmarks.mapTo(),
+            views = views.subjectViews,
             rewards = rewards.mapTo()
         )
 }

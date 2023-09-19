@@ -2,6 +2,8 @@ package com.enrech.routes.content
 
 import com.enrech.common.extension.getNonEmptyOrNull
 import com.enrech.common.extension.getSingleElement
+import com.enrech.common.extension.receiveOrNull
+import com.enrech.data.request.NewSubjectDto
 import com.enrech.domain.model.Errors
 import com.enrech.domain.repository.ChapterRepository
 import com.enrech.domain.repository.SubjectRepository
@@ -38,12 +40,12 @@ fun Route.subjectRoutes() {
             call.respond(data)
         }
         post("/new") {
-            val title = Json.getSingleElement<String>(call.receiveText(), "title") ?: return@post call.respond(
+            val data = call.receiveOrNull<NewSubjectDto>() ?: return@post call.respond(
                 status = HttpStatusCode.BadRequest,
-                Errors.MissingInputParameter("title").toResponse()
+                Errors.BadRequestBody.toResponse()
             )
 
-            repo.addNewSubject(title)?.let {
+            repo.addNewSubject(data.title, data.acronym)?.let {
                 call.respond(HttpStatusCode.Created, it)
             } ?: call.respond(status = HttpStatusCode.fromValue(400), Errors.Unknown.toResponse())
         }

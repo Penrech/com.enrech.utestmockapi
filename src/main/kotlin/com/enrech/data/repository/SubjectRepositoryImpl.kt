@@ -9,7 +9,7 @@ class SubjectRepositoryImpl(private val dao: SubjectDAOFacade) : SubjectReposito
 
     override suspend fun subject(id: String): SubjectEntity? = dao.subject(id)
 
-    override suspend fun addNewSubject(title: String): SubjectEntity? = dao.addNewSubject(title)
+    override suspend fun addNewSubject(title: String, acronym: String): SubjectEntity? = dao.addNewSubject(title, acronym)
 
     override suspend fun editSubject(id: String, title: String): Boolean = dao.editSubject(id, title)
 

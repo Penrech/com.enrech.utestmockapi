@@ -29,5 +29,5 @@ class UserReward(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserRewardEntit
 }
 
 object UserRewards : UUIDTable() {
-    val user = reference("user", Users)
+    val user = reference("user", Users, onUpdate = ReferenceOption.CASCADE, onDelete = ReferenceOption.CASCADE)
 }

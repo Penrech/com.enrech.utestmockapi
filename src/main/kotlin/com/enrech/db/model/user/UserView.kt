@@ -25,12 +25,11 @@ data class UserViewEntity(
 
 class UserView(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserViewEntity> {
     companion object: UUIDEntityClass<UserView>(UserViews)
-    var lessonId by UserViews.lesson
+    var lesson by Lesson referencedOn UserViews.lesson
     var completed by UserViews.completed
     var playingPosition by UserViews.playingPosition
     var lastUpdate by UserViews.lastUpdate
-
-    val group by UserViewGroup backReferencedOn UserViewsGroup.views
+    var group by UserViewGroup referencedOn UserViews.group
 
     val active
         get() =
@@ -38,14 +37,13 @@ class UserView(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserViewEntity> 
                 .and(!completed)
                 .and(playingPosition > 0)
 
-    val lesson by Lesson referencedOn UserViews.id
     val chapter get() = lesson.group.chapter
     val subject get() = chapter.subject
 
     override fun mapTo(): UserViewEntity =
         UserViewEntity(
             id = id.value.toString(),
-            lessonId = lessonId.toString(),
+            lessonId = lesson.id.value.toString(),
             completed = completed,
             playingPosition = playingPosition,
             lastUpdate = lastUpdate,
@@ -54,8 +52,8 @@ class UserView(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserViewEntity> 
 }
 
 object UserViews: UUIDTable() {
-    val lesson = uuid("lesson_id").references(Lessons.id, onDelete = ReferenceOption.CASCADE)
-    val group = reference("group", UserViewsGroup)
+    val lesson = reference("lesson", Lessons, onUpdate = ReferenceOption.CASCADE, onDelete = ReferenceOption.CASCADE)
+    val group = reference("group", UserViewsGroup, onDelete = ReferenceOption.CASCADE, onUpdate = ReferenceOption.CASCADE)
     val completed = bool("completed")
     val playingPosition = long("position")
     val lastUpdate = long("last_update")

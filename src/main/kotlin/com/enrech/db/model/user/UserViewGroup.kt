@@ -37,10 +37,8 @@ data class UserViewChapterEntity(
 class UserViewGroup(id: EntityID<UUID>): UUIDEntity(id) {
     companion object: UUIDEntityClass<UserViewGroup>(UserViewsGroup)
 
-    val user by User backReferencedOn Users.id
-
+    var user by User referencedOn UserViewsGroup.user
     private val rawViews by UserView referrersOn UserViews.group
-    val views by UserViewsGroup.views
 
     val subjectViews get() = rawViews.groupBy { it.subject }.map {
         val subject = it.key
@@ -85,5 +83,5 @@ class UserViewGroup(id: EntityID<UUID>): UUIDEntity(id) {
 }
 
 object UserViewsGroup: UUIDTable() {
-    val views = reference("views", UserViews, onDelete = ReferenceOption.CASCADE)
+    val user = reference("user", Users, onUpdate = ReferenceOption.CASCADE, onDelete = ReferenceOption.CASCADE)
 }

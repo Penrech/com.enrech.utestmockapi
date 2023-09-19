@@ -27,7 +27,7 @@ class ChapterDAOFacadeImpl : ChapterDAOFacade {
         Chapter.new {
             this.title = title
             this.order = order
-            this.subjectId = UUID.fromString(subjectId)
+            this.subject = Subject[UUID.fromString(subjectId)]
         }.mapTo()
     }
 

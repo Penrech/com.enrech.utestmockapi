@@ -5,7 +5,6 @@ import com.enrech.db.DatabaseFactory.dbQuery
 import com.enrech.db.DatabaseFactory.dbQueryWithCatch
 import com.enrech.db.model.content.Subject
 import com.enrech.db.model.content.SubjectEntity
-import org.jetbrains.exposed.sql.vendors.ForUpdateOption
 import java.util.*
 
 class SubjectDAOFacadeImpl : SubjectDAOFacade {
@@ -17,9 +16,10 @@ class SubjectDAOFacadeImpl : SubjectDAOFacade {
         Subject[UUID.fromString(id)].mapTo()
     }
 
-    override suspend fun addNewSubject(title: String): SubjectEntity? = dbQuery {
+    override suspend fun addNewSubject(title: String, acronym: String): SubjectEntity? = dbQueryWithCatch{
         Subject.new {
             this.name = title
+            this.acronym = acronym
         }.mapTo()
     }
 
@@ -29,7 +29,7 @@ class SubjectDAOFacadeImpl : SubjectDAOFacade {
         subject.flush()
     } ?: false
 
-    override suspend fun deleteSubject(id: String): Boolean = dbQuery {
+    override suspend fun deleteSubject(id: String): Boolean = dbQueryWithCatch{
         Subject[UUID.fromString(id)].delete()
         true
     } ?: false

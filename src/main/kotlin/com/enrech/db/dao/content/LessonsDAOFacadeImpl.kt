@@ -23,7 +23,7 @@ class LessonsDAOFacadeImpl : LessonsDAOFacade {
         streamUrl: String
     ): LessonEntity? = dbQueryWithCatch {
         Lesson.new {
-            this.groupId = UUID.fromString(groupId)
+            this.group = LessonGroup[UUID.fromString(groupId)]
             this.name = name
             this.description = description
             this.duration = duration

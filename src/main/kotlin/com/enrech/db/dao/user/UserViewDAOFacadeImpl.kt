@@ -7,12 +7,14 @@ import com.enrech.db.model.user.*
 import java.util.*
 
 class UserViewDAOFacadeImpl : UserViewDAOFacade {
-    override suspend fun logNewLessonView(lessonId: String, userId: String, position: Long): UserViewEntity? = dbQuery {
+    override suspend fun logNewLessonView(lessonId: String, userId: String, position: Long): UserViewEntity? = dbQueryWithCatch{
         val lessonUUID = UUID.fromString(lessonId)
         val lesson = Lesson[lessonUUID]
+        val group = User[UUID.fromString(userId)].views
 
         UserView.new {
-            this.lessonId = lessonUUID
+            this.lesson = lesson
+            this.group = group
             completed = lesson.duration == position
             playingPosition = position
             lastUpdate = System.currentTimeMillis()

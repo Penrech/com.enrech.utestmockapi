@@ -15,6 +15,7 @@ import java.util.UUID
 data class SubjectEntity(
     val id: String,
     val name: String,
+    val acronym: String,
     val chapters: List<ChapterEntity>,
     val totalChapters: Long,
     val totalLessons: Long
@@ -24,7 +25,8 @@ class Subject(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<SubjectEntity> {
     companion object : UUIDEntityClass<Subject>(Subjects)
 
     var name by Subjects.name
-    val chapters get() = Chapter.find { Chapters.subject eq this@Subject.id.value }
+    var acronym by Subjects.acronym
+    val chapters by Chapter referrersOn Chapters.subject
     val totalChapters get() = chapters.count()
     val totalLessons get() = chapters.sumOf { it.totalLessons }
 
@@ -32,6 +34,7 @@ class Subject(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<SubjectEntity> {
         SubjectEntity(
             id = this.id.value.toString(),
             name = name,
+            acronym = acronym,
             chapters = chapters.mapTo(),
             totalChapters = totalChapters,
             totalLessons = totalLessons
@@ -40,4 +43,5 @@ class Subject(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<SubjectEntity> {
 
 object Subjects : UUIDTable() {
     val name = varchar("name", 512)
+    val acronym = varchar("acronym", length = 3)
 }
