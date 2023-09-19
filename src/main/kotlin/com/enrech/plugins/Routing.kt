@@ -1,5 +1,6 @@
 package com.enrech.plugins
 
+import com.enrech.routes.admin.adminRoutes
 import com.enrech.routes.content.content
 import com.enrech.routes.content.subjectRoutes
 import com.enrech.routes.user.bookmarkRoutes
@@ -16,5 +17,6 @@ fun Application.configureRouting() {
         bookmarkRoutes()
         rewardRoutes()
         viewRoutes()
+        adminRoutes()
     }
 }

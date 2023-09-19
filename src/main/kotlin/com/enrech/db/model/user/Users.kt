@@ -13,7 +13,6 @@ import java.util.UUID
 data class UserEntity(
     val id: String,
     val email: String,
-    val views: List<UserSubjectEntity>,
     val bookmarks: List<UserBookmarkEntity>,
     val rewards: UserRewardEntity
 )
@@ -23,15 +22,14 @@ class User(id: EntityID<UUID>) : UUIDEntity(id), BaseMapper<UserEntity> {
 
     var email by Users.email
     var password by Users.password
-    val views get() = UserSubject.find { UserSubjects.user eq this@User.id.value }
     val bookmarks get() = UserBookmark.find { UserBookmarks.user eq this@User.id.value }
-    val rewards get() = UserReward.find { UserRewards.user eq this@User.id.value }.first()
+
+    val rewards by UserReward backReferencedOn UserRewards.user
 
     override fun mapTo(): UserEntity =
         UserEntity(
             id = this.id.value.toString(),
             email = email,
-            views = views.mapTo(),
             bookmarks = bookmarks.mapTo(),
             rewards = rewards.mapTo()
         )

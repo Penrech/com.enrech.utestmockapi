@@ -16,9 +16,9 @@ data class UserRewardEntity(val userId: String, val badges: List<UserBadgeEntity
 
 class UserReward(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserRewardEntity> {
     companion object: UUIDEntityClass<UserReward>(UserRewards)
-    var userId by UserRewards.user
-    val user by User referencedOn UserRewards.user
-    val badges get() = UserBadge.find { UserBadges.reward eq this@UserReward.id.value }
+
+    var user by User referencedOn UserRewards.user
+    val badges by UserBadge referrersOn UserBadges.reward
 
     override fun mapTo(): UserRewardEntity =
         UserRewardEntity(
@@ -29,5 +29,5 @@ class UserReward(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<UserRewardEntit
 }
 
 object UserRewards : UUIDTable() {
-    val user = uuid("user_id").uniqueIndex().references(Users.id, onDelete = ReferenceOption.CASCADE)
+    val user = reference("user", Users)
 }

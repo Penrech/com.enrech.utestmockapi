@@ -20,9 +20,9 @@ class UserRewardsDAOFacadeImpl : UserRewardsDAOFacade {
     }
 
     override suspend fun addNewBadge(userId: String, timestamp: Long): UserBadgeEntity? = dbQuery {
-        val userReward = User[UUID.fromString(userId)].rewards
+        val user = User[UUID.fromString(userId)]
         UserBadge.new {
-            this.rewardId = userReward.id.value
+            this.reward = user.rewards
             this.obtainedTime = timestamp
         }.mapTo()
     }
