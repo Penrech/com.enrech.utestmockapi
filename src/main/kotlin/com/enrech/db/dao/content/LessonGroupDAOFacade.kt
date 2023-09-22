@@ -5,6 +5,7 @@ import com.enrech.db.model.content.LessonGroupEntity
 
 interface LessonGroupDAOFacade {
     suspend fun allLessonGroups(): List<LessonGroupEntity>
+    suspend fun getLessonGroupsByChapter(id: String): List<LessonGroupEntity>
     suspend fun getLessonGroup(id: String): LessonGroupEntity?
     suspend fun getChapter(groupId: String): ChapterEntity?
     suspend fun addNewLessonGroup(title: String, chapterId: String): LessonGroupEntity?

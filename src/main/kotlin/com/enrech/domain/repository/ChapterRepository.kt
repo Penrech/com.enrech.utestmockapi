@@ -5,6 +5,7 @@ import com.enrech.db.model.content.SubjectEntity
 
 interface ChapterRepository {
     suspend fun allChapters(): List<ChapterEntity>
+    suspend fun getChaptersBySubject(id: String): List<ChapterEntity>
     suspend fun chapter(id: String): ChapterEntity?
     suspend fun getSubject(chapterId: String): SubjectEntity?
     suspend fun addNewChapter(title: String, order: Int, subjectId: String): ChapterEntity?

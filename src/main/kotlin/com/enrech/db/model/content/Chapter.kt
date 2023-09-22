@@ -12,7 +12,7 @@ import org.jetbrains.exposed.sql.deleteAll
 import java.util.UUID
 
 @Serializable
-data class ChapterEntity(val id: String, val title: String, val order: Int, val lessonGroups: List<LessonGroupEntity>, val totalLessons: Long)
+data class ChapterEntity(val id: String, val subjectId: String, val title: String, val order: Int, val lessonGroups: List<LessonGroupEntity>, val totalLessons: Long)
 
 class Chapter(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<ChapterEntity> {
     companion object: UUIDEntityClass<Chapter>(Chapters)
@@ -25,6 +25,7 @@ class Chapter(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<ChapterEntity> {
     override fun mapTo(): ChapterEntity =
         ChapterEntity(
             id = this.id.value.toString(),
+            subjectId = subject.id.value.toString(),
             title = title,
             order = order,
             lessonGroups = lessonGroups.mapTo(),

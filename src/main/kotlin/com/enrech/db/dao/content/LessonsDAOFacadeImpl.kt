@@ -8,6 +8,10 @@ import java.util.*
 class LessonsDAOFacadeImpl : LessonsDAOFacade {
     override suspend fun allLessons(): List<LessonEntity> = dbQueryWithCatch { Lesson.all().mapTo() } ?: emptyList()
 
+    override suspend fun getLessonsByGroup(id: String): List<LessonEntity> = dbQueryWithCatch {
+        Lesson.find { Lessons.group eq UUID.fromString(id) }.mapTo()
+    } ?: emptyList()
+
     override suspend fun lesson(id: String): LessonEntity? = dbQueryWithCatch { Lesson[UUID.fromString(id)].mapTo() }
 
     override suspend fun getLessonGroup(lessonId: String): LessonGroupEntity? = dbQueryWithCatch {

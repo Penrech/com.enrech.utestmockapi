@@ -22,6 +22,9 @@ fun Route.chapterRoutes() {
             call.request.queryParameters.getNonEmptyOrNull("groupId")?.let {
                 val data = groupRepo.getChapter(it)?.let { listOf(it) } ?: emptyList()
                 call.respond(data)
+            } ?: call.request.queryParameters.getNonEmptyOrNull("subjectId")?.let {
+                val data = repo.getChaptersBySubject(it)
+                call.respond(data)
             } ?: call.respond(repo.allChapters())
         }
         get("/{id}") {

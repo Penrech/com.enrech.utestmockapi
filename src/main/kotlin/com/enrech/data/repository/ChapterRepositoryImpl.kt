@@ -9,6 +9,8 @@ import com.enrech.domain.repository.ChapterRepository
 class ChapterRepositoryImpl(private val dao: ChapterDAOFacade) : ChapterRepository {
     override suspend fun allChapters(): List<ChapterEntity> = dao.allChapters()
 
+    override suspend fun getChaptersBySubject(id: String): List<ChapterEntity> = dao.getChaptersBySubject(id)
+
     override suspend fun chapter(id: String): ChapterEntity? = dao.chapter(id)
 
     override suspend fun getSubject(chapterId: String): SubjectEntity? = dao.getSubject(chapterId)

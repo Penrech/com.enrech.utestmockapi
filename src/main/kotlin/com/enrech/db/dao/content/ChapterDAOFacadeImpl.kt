@@ -2,16 +2,18 @@ package com.enrech.db.dao.content
 
 import com.enrech.common.mapTo
 import com.enrech.db.DatabaseFactory.dbQueryWithCatch
-import com.enrech.db.model.content.Chapter
-import com.enrech.db.model.content.ChapterEntity
-import com.enrech.db.model.content.Subject
-import com.enrech.db.model.content.SubjectEntity
+import com.enrech.db.model.content.*
+import com.enrech.db.model.content.Lessons.entityId
 import java.util.*
 
 class ChapterDAOFacadeImpl : ChapterDAOFacade {
 
     override suspend fun allChapters(): List<ChapterEntity> = dbQueryWithCatch {
         Chapter.all().mapTo()
+    } ?: emptyList()
+
+    override suspend fun getChaptersBySubject(id: String): List<ChapterEntity> = dbQueryWithCatch {
+        Chapter.find { Chapters.subject eq UUID.fromString(id) }.mapTo()
     } ?: emptyList()
 
     override suspend fun chapter(id: String): ChapterEntity? = dbQueryWithCatch {

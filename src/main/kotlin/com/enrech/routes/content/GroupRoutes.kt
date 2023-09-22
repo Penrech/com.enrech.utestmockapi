@@ -24,6 +24,9 @@ fun Route.groupRoutes() {
             call.request.queryParameters.getNonEmptyOrNull("lessonId")?.let {
                 val data = lessonRepo.getLessonGroup(it)?.let { listOf(it) } ?: emptyList()
                 call.respond(data)
+            } ?: call.request.queryParameters.getNonEmptyOrNull("chapterId")?.let {
+                val data = repo.getLessonsByChapter(it)
+                call.respond(data)
             } ?: call.respond(repo.allLessonGroups())
         }
         get("/{id}") {

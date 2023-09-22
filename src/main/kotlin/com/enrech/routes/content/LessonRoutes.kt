@@ -19,7 +19,10 @@ fun Route.lessonRoutes() {
 
     route("/lesson") {
         get {
-            call.respond(repo.allLessons())
+            call.request.queryParameters.getNonEmptyOrNull("groupId")?.let {
+                val data = repo.getLessonsByGroup(it)
+                call.respond(data)
+            } ?: call.respond(repo.allLessons())
         }
         get("/{id}") {
             val id = call.parameters.getNonEmptyOrNull("id") ?: return@get call.respond(

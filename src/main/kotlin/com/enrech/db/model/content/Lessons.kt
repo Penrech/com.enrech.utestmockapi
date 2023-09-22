@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.ReferenceOption
 import java.util.UUID
 
 @Serializable
-data class LessonEntity(val id: String, val name: String, val description: String, val duration: Long, val streamUrl: String)
+data class LessonEntity(val id: String, val groupId: String, val name: String, val description: String, val duration: Long, val streamUrl: String)
 
 class Lesson(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<LessonEntity> {
     companion object : UUIDEntityClass<Lesson>(Lessons)
@@ -20,7 +20,7 @@ class Lesson(id: EntityID<UUID>): UUIDEntity(id), BaseMapper<LessonEntity> {
     var streamUrl by Lessons.streamUrl
     var group by LessonGroup referencedOn Lessons.group
 
-    override fun mapTo(): LessonEntity = LessonEntity(this.id.value.toString(), name, description, duration, streamUrl)
+    override fun mapTo(): LessonEntity = LessonEntity(this.id.value.toString(), group.id.value.toString(), name, description, duration, streamUrl)
 }
 
 object Lessons: UUIDTable() {

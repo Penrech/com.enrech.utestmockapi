@@ -3,16 +3,17 @@ package com.enrech.db.dao.content
 import com.enrech.common.mapTo
 import com.enrech.db.DatabaseFactory
 import com.enrech.db.DatabaseFactory.dbQueryWithCatch
-import com.enrech.db.model.content.Chapter
-import com.enrech.db.model.content.ChapterEntity
-import com.enrech.db.model.content.LessonGroup
-import com.enrech.db.model.content.LessonGroupEntity
+import com.enrech.db.model.content.*
 import java.util.*
 
 class LessonGroupDAOFacadeImpl : LessonGroupDAOFacade {
 
     override suspend fun allLessonGroups(): List<LessonGroupEntity> = dbQueryWithCatch {
         LessonGroup.all().mapTo()
+    } ?: emptyList()
+
+    override suspend fun getLessonGroupsByChapter(id: String): List<LessonGroupEntity> = dbQueryWithCatch {
+        LessonGroup.find { LessonGroups.chapter eq UUID.fromString(id) }.mapTo()
     } ?: emptyList()
 
     override suspend fun getLessonGroup(id: String): LessonGroupEntity? = dbQueryWithCatch {

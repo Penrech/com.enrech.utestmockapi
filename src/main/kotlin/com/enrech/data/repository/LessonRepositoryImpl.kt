@@ -8,6 +8,8 @@ import com.enrech.domain.repository.LessonRepository
 class LessonRepositoryImpl(private val dao: LessonsDAOFacade) : LessonRepository {
     override suspend fun allLessons(): List<LessonEntity> = dao.allLessons()
 
+    override suspend fun getLessonsByGroup(id: String): List<LessonEntity> = dao.getLessonsByGroup(id)
+
     override suspend fun lesson(id: String): LessonEntity? = dao.lesson(id)
 
     override suspend fun getLessonGroup(lessonId: String): LessonGroupEntity? = dao.getLessonGroup(lessonId)
